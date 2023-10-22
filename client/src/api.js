@@ -55,3 +55,30 @@ export const createNewQuery = async (newQuery) => {
         alert("Something went wrong")
     }
 }
+
+export const getUnallotedQuerys = async () => {
+	try {
+		const { data } = await axios.get( BASE_URL + "/api/querys/unalloted")
+		return data
+	} catch (error) {
+		alert("Something went wrong.")
+	}
+}
+
+export const getAllotedQuerys = async (id) => {
+    try {
+        const { data } = await axios.get( BASE_URL + `/api/querys/agent/${id}`)
+        return data
+    } catch (error) {
+        alert("Something went wrong")
+    }
+}
+
+export const getQuerysByCustomerId = async (id) => {
+    try {
+        const { data } = await axios.get( BASE_URL + `/api/querys/customer/${id}`)
+        return data
+    } catch (error) {
+        alert("Something went wrong")
+    }
+}

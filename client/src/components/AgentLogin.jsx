@@ -43,7 +43,10 @@ const AgentLogin = () => {
 		<div>
 			{screen === 0 ? (
 				<>
-					<Form.Select onChange={(e) => setAgentId(e.target.value)}>
+					<Form.Select
+						onChange={(e) => setAgentId(e.target.value)}
+						className="home-form"
+					>
 						<option>Select Agent</option>
 						{agentList.map((agent) => (
 							<option value={agent.agentId}>{agent.email}</option>
@@ -56,8 +59,11 @@ const AgentLogin = () => {
 				</>
 			) : (
 				<>
-					<Form>
-						<Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+					<Form className="home-form">
+						<Form.Group
+							className="mb-3 home-form-grp"
+							controlId="exampleForm.ControlInput1"
+						>
 							<Form.Label>Email address</Form.Label>
 							<Form.Control
 								onChange={(e) =>
@@ -68,7 +74,7 @@ const AgentLogin = () => {
 							/>
 						</Form.Group>
 						<Form.Group
-							className="mb-3"
+							className="mb-3 home-form-grp"
 							controlId="exampleForm.ControlTextarea1"
 						>
 							<Form.Label>Name</Form.Label>
@@ -78,6 +84,7 @@ const AgentLogin = () => {
 								}
 								type="text"
 								placeholder="name"
+								className="mb-3"
 							/>
 							<Button onClick={handleSubmit}>Submit</Button>
 						</Form.Group>

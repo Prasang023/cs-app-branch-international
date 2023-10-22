@@ -1,5 +1,5 @@
 const Query = require("../models/queryModel")
-let nextQueryId = 1
+// let nextQueryId = 1
 
 // @desc Fetch all queries
 // @route GET /api/querys
@@ -18,12 +18,13 @@ const getQuerys = async (req, res) => {
 // @route POST /api/querys
 const addQuery = async (req, res) => {
 	const newQuery = new Query(req.body)
-	newQuery.queryId = "Q-" + nextQueryId
+	// newQuery.queryId = "Q-" + nextQueryId
 	try {
 		const savedQuery = await newQuery.save()
 		res.status(200).json(savedQuery)
 		console.log("post: Query call success")
 	} catch (err) {
+        console.log(err)    
 		res.status(500).json(err)
 	}
 }
@@ -36,8 +37,45 @@ const getQueryById = async (req, res) => {
 		res.status(200).json(query)
 		console.log("get: Query/:id call success")
 	} catch (err) {
+        console.log(err)
 		res.status(500).json(err)
 	}
 }
 
-module.exports = { getQuerys, addQuery, getQueryById }
+// @desc get unalloted queries
+// @route GET /api/querys/unalloted
+const getUnallotedQuerys = async (req, res) => {
+	try {
+		const query = await Query.find({ isAlloted: false })
+		res.status(200).json(query)
+		console.log("get: Query/unalloted call success")
+	} catch (err) {
+		res.status(500).json(err)
+	}
+}
+
+// @desc get alloted queries to a agent
+// @route GET /api/querys/agent/:id
+const getAllotedQuerysByAgentId = async (req, res) => {
+	try {
+		const query = await Query.find({ agentId: req.params.id })
+		res.status(200).json(query)
+		console.log("get: Query/agent/:id call success")
+	} catch (err) {
+		res.status(500).json(err)
+	}
+}
+
+// @desc get queries acc to customer id
+// @route GET /api/querys/customer/:id
+const getQuerysByCustomerId = async (req, res) => {
+	try {
+		const query = await Query.find({ customerId: req.params.id })
+		res.status(200).json(query)
+		console.log("get: Query/customer/:id call success")
+	} catch (err) {
+		res.status(500).json(err)
+	}
+}
+
+module.exports = { getQuerys, addQuery, getQueryById, getUnallotedQuerys, getAllotedQuerysByAgentId, getQuerysByCustomerId }

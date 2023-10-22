@@ -35,14 +35,17 @@ const CustomerLogin = () => {
 		const data = await createNewCustomer(newCustomerData)
 		console.log(data)
 		// localStorage.setItem("customer", data.customerId)
-    navigate(`/customer-dashboard/${customerId}`)
+		navigate(`/customer-dashboard/${customerId}`)
 	}
 
 	return (
 		<div>
 			{screen === 0 ? (
 				<>
-					<Form.Select onChange={(e) => setCustomerId(e.target.value)}>
+					<Form.Select
+						onChange={(e) => setCustomerId(e.target.value)}
+						className="home-form"
+					>
 						<option>Select Customer</option>
 						{customerList.map((customer) => (
 							<option value={customer.customerId}>{customer.email}</option>
@@ -55,8 +58,11 @@ const CustomerLogin = () => {
 				</>
 			) : (
 				<>
-					<Form>
-						<Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+					<Form className="mb-10">
+						<Form.Group
+							className="mb-3 home-form-grp"
+							controlId="exampleForm.ControlInput1"
+						>
 							<Form.Label>Email address</Form.Label>
 							<Form.Control
 								onChange={(e) =>
@@ -70,7 +76,7 @@ const CustomerLogin = () => {
 							/>
 						</Form.Group>
 						<Form.Group
-							className="mb-3"
+							className="mb-3 home-form-grp"
 							controlId="exampleForm.ControlTextarea1"
 						>
 							<Form.Label>Name</Form.Label>
@@ -83,8 +89,9 @@ const CustomerLogin = () => {
 								}
 								type="text"
 								placeholder="name"
+                className="mb-3"
 							/>
-							<Button onClick={handleSubmit}>Submit</Button>
+							<Button onClick={handleSubmit} className="mt-3">Submit</Button>
 						</Form.Group>
 						<p>
 							Existing User ? <b onClick={() => setScreen(0)}>Click Here</b>

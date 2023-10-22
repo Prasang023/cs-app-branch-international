@@ -9,7 +9,6 @@ const messageSchema = mongoose.Schema({
 
 QuerySchema = new mongoose.Schema(
 	{
-		queryId: { type: String, required: true, unique: true },
 		customerId: { type: String, required: true },
 		agentId: { type: String, default: "empty" },
 		priority: { type: Number, default: 3 },
