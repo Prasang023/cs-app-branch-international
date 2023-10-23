@@ -28,7 +28,7 @@ const CustDashboard = () => {
 		let priority = 2
 		let keys = Object.keys(priorityData)
 		for (let i = 0; i < keys.length; i++) {
-			if(priorityData[keys[i]].indexOf(queryCategory) > -1) {
+			if (priorityData[keys[i]].indexOf(queryCategory) > -1) {
 				priority = Number(i)
 				break
 			}
@@ -115,7 +115,10 @@ const CustDashboard = () => {
 				</Modal.Header>
 				<Modal.Body>
 					<Form>
-						<Form.Select className="mb-3" onChange={(e) => setQueryCategory(e.target.value)}>
+						<Form.Select
+							className="mb-3"
+							onChange={(e) => setQueryCategory(e.target.value)}
+						>
 							<option value="">Select Category</option>
 							<option value="loan">Loans</option>
 							<option value="transaction">Transaction</option>

@@ -6,11 +6,10 @@ import { getAllAgents, createNewAgent } from "../api"
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 
-const AgentLogin = () => {
+const AgentLogin = ({ toggleShowA }) => {
 	const [screen, setScreen] = useState(0)
 	const [agentList, setAgentList] = useState([])
 	const [agentId, setAgentId] = useState(null)
-	const [socket, setSocket] = useState(null)
 	const [newAgentData, setNewAgentData] = useState({
 		email: "",
 		name: ""
@@ -35,8 +34,11 @@ const AgentLogin = () => {
 		console.log(newAgentData)
 		const data = await createNewAgent(newAgentData)
 		console.log(data)
-		localStorage.setItem("agent", data.agentId)
-		navigate(`/agent-dashboard/${agentId}`)
+		toggleShowA()
+		setNewAgentData({
+			email: "",
+			name: ""
+		})
 	}
 
 	return (
@@ -66,6 +68,7 @@ const AgentLogin = () => {
 						>
 							<Form.Label>Email address</Form.Label>
 							<Form.Control
+								value={newAgentData.email}
 								onChange={(e) =>
 									setNewAgentData({ ...newAgentData, email: e.target.value })
 								}
@@ -79,6 +82,7 @@ const AgentLogin = () => {
 						>
 							<Form.Label>Name</Form.Label>
 							<Form.Control
+								value={newAgentData.name}
 								onChange={(e) =>
 									setNewAgentData({ ...newAgentData, name: e.target.value })
 								}

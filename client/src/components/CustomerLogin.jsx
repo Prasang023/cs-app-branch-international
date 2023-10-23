@@ -6,7 +6,7 @@ import { getAllCustomers, createNewCustomer } from "../api"
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 
-const CustomerLogin = () => {
+const CustomerLogin = ({ toggleShowA }) => {
 	const [screen, setScreen] = useState(0)
 	const [customerList, setCustomerList] = useState([])
 	const [customerId, setCustomerId] = useState(null)
@@ -34,8 +34,11 @@ const CustomerLogin = () => {
 		console.log(newCustomerData)
 		const data = await createNewCustomer(newCustomerData)
 		console.log(data)
-		// localStorage.setItem("customer", data.customerId)
-		navigate(`/customer-dashboard/${customerId}`)
+		toggleShowA()
+		setNewCustomerData({
+			email: "",
+			name: ""
+		})
 	}
 
 	return (
@@ -71,6 +74,7 @@ const CustomerLogin = () => {
 										email: e.target.value
 									})
 								}
+								value={newCustomerData.email}
 								type="email"
 								placeholder="name@example.com"
 							/>
@@ -81,6 +85,7 @@ const CustomerLogin = () => {
 						>
 							<Form.Label>Name</Form.Label>
 							<Form.Control
+								value={newCustomerData.name}
 								onChange={(e) =>
 									setNewCustomerData({
 										...newCustomerData,

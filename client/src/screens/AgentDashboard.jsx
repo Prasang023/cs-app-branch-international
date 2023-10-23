@@ -3,7 +3,14 @@ import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import { io } from "socket.io-client"
 import { useParams } from "react-router-dom"
-import { getUnallotedQuerys, getAllotedQuerys, allotQuery, updateConversation, getAgentById, getAllCustomers } from "../api"
+import {
+	getUnallotedQuerys,
+	getAllotedQuerys,
+	allotQuery,
+	updateConversation,
+	getAgentById,
+	getAllCustomers
+} from "../api"
 import Modal from "react-bootstrap/Modal"
 
 import Badge from "react-bootstrap/Badge"
@@ -30,18 +37,7 @@ const AgentDashboard = () => {
 		setSocket(s)
 
 		return () => {
-		// 	s.disconnect( async () => {
-		// 		await updateConversation(selectedChat?._id, conversation)
-		// 	})
-		// socket?.emit("disconnect", async () => {
-		// 	console.log("disconnecting client side")
-		// 	if(conversation.length > 0) {
-		// 		await updateConversation(selectedChat._id, conversation)
-		// 	}
-		// 	// socket?.disconnect()
-		// })	
-		// }
-		s.disconnect()
+			s.disconnect()
 		}
 	}, [])
 
@@ -50,15 +46,15 @@ const AgentDashboard = () => {
 		getQueries()
 	})
 
-    socket?.on("updateAfterAllotment", () => {
-        getQueries()
-        handleSelectedChat(null)
-    })
+	socket?.on("updateAfterAllotment", () => {
+		getQueries()
+		handleSelectedChat(null)
+	})
 
 	socket?.on("getMsg", ({ msg }) => {
 		console.log("triggered")
-        setConversation([...conversation, { text: msg, sentBy: "customer" }])
-    })
+		setConversation([...conversation, { text: msg, sentBy: "customer" }])
+	})
 
 	const getQueries = async () => {
 		const unallotedQueryData = await getUnallotedQuerys()
@@ -75,23 +71,23 @@ const AgentDashboard = () => {
 	useEffect(() => {
 		getQueries()
 		const getUserDetails = async () => {
-			const data = await getAgentById(id);
+			const data = await getAgentById(id)
 			setUserDetails(data[0])
 		}
 		getUserDetails()
 		// getAllCustomers()
-	}, [userDetails]);	
+	}, [userDetails])
 
 	// console.log(allCustomers)
 
 	const handleSend = () => {
-		if(!msg || msg === "") return
+		if (!msg || msg === "") return
 		setConversation([...conversation, { text: msg, sentBy: "agent" }])
 		console.log("Printeing id", socket.id)
 		socket.emit("sendMsg", {
 			senderId: id,
 			receiverId: selectedChat.customerId,
-			msg: msg,
+			msg: msg
 		})
 		setMsg("")
 	}
@@ -99,13 +95,13 @@ const AgentDashboard = () => {
 	const handleAllotment = async () => {
 		console.log(selectedChat)
 		const data = await allotQuery(selectedChat._id, id)
-        socket.emit('allotment')
+		socket.emit("allotment")
 		console.log(data)
 		handleClose()
 	}
 
 	const handleSelectedChat = async (query) => {
-		if(conversation.length > 0) {
+		if (conversation.length > 0) {
 			await updateConversation(selectedChat._id, conversation)
 		}
 		setSelectedChat(query)
@@ -117,7 +113,7 @@ const AgentDashboard = () => {
 
 	return (
 		<>
-		<Modal show={show} onHide={handleClose}>
+			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
 					<Modal.Title>Create New Query</Modal.Title>
 				</Modal.Header>
@@ -131,126 +127,162 @@ const AgentDashboard = () => {
 					<Button onClick={handleAllotment}>Submit</Button>
 				</Modal.Footer>
 			</Modal>
-		<div className="chat-outer-container">
-			<div className="left-panel">
-				<div className="left-top-navbar">{id} - {userDetails?.name} - {userDetails?.email}</div>
-				<div className="left-panel-section">
-					<h5>Unalloted Queries</h5>
-					{unallotedQuery?.map((query) => (
-						<div
-							className="query-thumbnail"
-							onClick={() => handleSelectedChat(query)}
-							key={query._id}
-						>
-							<div className="query-thumbnail-topline">
-								<p className="query-customer-details"><b>Customer id: </b>{query.customerId}</p>
-								<Badge bg={query.priority === 0 ? "danger" : query.priority === 1 ? "warning" : "info"}>
-									{query.priority === 0
-										? `p : ${query.priority} : urgent`
-										: query.priority === 1 ? `p : ${query.priority} : important` : `p : ${query.priority} : normal`}
-								</Badge>
-							</div>
-							<p className="query-msg-details">
-								<b>{query.query}</b>
-							</p>
-							<p className="query-thumbnail-topline">
-								Date: {query.createdAt.substring(0, 10)},{" "}
-								{query.createdAt.substring(16, 5)}
-							</p>
-						</div>
-					))}
-				</div>
-				<div className="left-panel-section">
-					<h5>Alloted Queries</h5>
-					{allotedQuery?.map((query) => (
-						<div
-							key={query._id}
-							className="query-thumbnail"
-							onClick={() => handleSelectedChat(query)}
-						>
-							<div className="query-thumbnail-topline">
-								<p className="query-customer-details"><b>Customer id: </b>{query.customerId}</p>
-								<Badge bg={query.priority === 0 ? "danger" : query.priority === 1 ? "warning" : "info"}>
-									{query.priority === 0
-										? `p : ${query.priority} : urgent`
-										: `p : ${query.priority}`}
-								</Badge>
-							</div>
-							<p className="query-msg-details">
-								<b>{query.query}</b>
-							</p>
-							<p className="query-thumbnail-topline">
-								Date: {query.createdAt.substring(0, 10)},{" "}
-								{query.createdAt.substring(16, 5)}
-							</p>
-						</div>
-					))}
-				</div>
-			</div>
-			<div className="right-panel">
-				{selectedChat ? (
-					<div className="chat-container">
-						{selectedChat.conversation.map((chat) => (
+			<div className="chat-outer-container">
+				<div className="left-panel">
+					<div className="left-top-navbar">
+						{id} - {userDetails?.name} - {userDetails?.email}
+					</div>
+					<h5 className="heading-section">Unalloted Queries</h5>
+					<div className="left-panel-section">
+						{unallotedQuery?.map((query) => (
 							<div
-								key={chat._id}
-								className={
-									chat.sentBy === "customer" ? "chatToLeft" : "chatToRight"
-								}
+								className="query-thumbnail"
+								onClick={() => handleSelectedChat(query)}
+								key={query._id}
 							>
-								<p
-									className={
-										chat.sentBy === "customer"
-											? "chattextleft"
-											: "chattextright"
-									}
-								>
-									{chat.text}
+								<div className="query-thumbnail-topline">
+									<p className="query-customer-details">
+										<b>Customer id: </b>
+										{query.customerId}
+									</p>
+									<Badge
+										bg={
+											query.priority === 0
+												? "danger"
+												: query.priority === 1
+												? "warning"
+												: "info"
+										}
+									>
+										{query.priority === 0
+											? `p : ${query.priority} : urgent`
+											: query.priority === 1
+											? `p : ${query.priority} : important`
+											: `p : ${query.priority} : normal`}
+									</Badge>
+								</div>
+								<p className="query-msg-details">
+									<b>{query.query}</b>
 								</p>
-							</div>
-						))}
-						{conversation?.map((chat, i) => (
-							<div
-								key = {chat.text + i}
-								className={
-									chat.sentBy === "customer" ? "chatToLeft" : "chatToRight"
-								}
-							>
-								<p
-									className={
-										chat.sentBy === "customer"
-											? "chattextleft"
-											: "chattextright"
-									}
-								>
-									{chat.text}
+								<p className="query-thumbnail-topline">
+									Date: {query.createdAt.substring(0, 10)},{" "}
+									{query.createdAt.substring(16, 5)}
 								</p>
 							</div>
 						))}
 					</div>
-				) : (
-					<div>No Chat Selected</div>
-				)}
-				{selectedChat ? <div className="send-msg-area">
-					<Form>
-						<Form.Group className="mb-3" controlId="formBasicEmail">
-							<Form.Control
-								value={msg}
-								disabled={!selectedChat?.agentId}
-								onChange={(e) => setMsg(e.target.value)}
-								type="text"
-								placeholder="Type Message Here"
-							/>
-						</Form.Group>
-					</Form>
-					<Button
-						type="submit"
-						onClick={selectedChat?.agentId ? handleSend : handleShow }
-					>
-						{selectedChat?.agentId ? "Send" : "Take this query"}
-					</Button>
-				</div> : null}
+					<h5 className="heading-section">Alloted Queries</h5>
+					<div className="left-panel-section">
+						{allotedQuery?.map((query) => (
+							<div
+								key={query._id}
+								className="query-thumbnail"
+								onClick={() => handleSelectedChat(query)}
+							>
+								<div className="query-thumbnail-topline">
+									<p className="query-customer-details">
+										<b>Customer id: </b>
+										{query.customerId}
+									</p>
+									<div>
+										<Badge
+											style={{ marginRight: "10px" }}
+											bg={query.isResolved ? "success" : "warning"}
+										>
+											{query.isResolved ? "Resolved" : "Unresolved"}
+										</Badge>
+										<Badge
+											bg={
+												query.priority === 0
+													? "danger"
+													: query.priority === 1
+													? "warning"
+													: "info"
+											}
+										>
+											{query.priority === 0
+												? `p : ${query.priority} : urgent`
+												: `p : ${query.priority}`}
+										</Badge>
+									</div>
+								</div>
+								<p className="query-msg-details">
+									<b>{query.query}</b>
+								</p>
+								<p className="query-thumbnail-topline">
+									Date: {query.createdAt.substring(0, 10)},{" "}
+									{query.createdAt.substring(16, 5)}
+								</p>
+							</div>
+						))}
+					</div>
+				</div>
+				<div className="right-panel">
+					{selectedChat ? (
+						<div className="chat-container">
+							{selectedChat.conversation.map((chat) => (
+								<div
+									key={chat._id}
+									className={
+										chat.sentBy === "customer" ? "chatToLeft" : "chatToRight"
+									}
+								>
+									<p
+										className={
+											chat.sentBy === "customer"
+												? "chattextleft"
+												: "chattextright"
+										}
+									>
+										{chat.text}
+									</p>
+								</div>
+							))}
+							{conversation?.map((chat, i) => (
+								<div
+									key={chat.text + i}
+									className={
+										chat.sentBy === "customer" ? "chatToLeft" : "chatToRight"
+									}
+								>
+									<p
+										className={
+											chat.sentBy === "customer"
+												? "chattextleft"
+												: "chattextright"
+										}
+									>
+										{chat.text}
+									</p>
+								</div>
+							))}
+						</div>
+					) : (
+						<div>No Chat Selected</div>
+					)}
+					{selectedChat ? (
+						<div className="send-msg-area">
+							<Form>
+								<Form.Group className="mb-3" controlId="formBasicEmail">
+									<Form.Control
+										value={msg}
+										disabled={!selectedChat?.agentId}
+										onChange={(e) => setMsg(e.target.value)}
+										type="text"
+										placeholder="Type Message Here"
+									/>
+								</Form.Group>
+							</Form>
+							<Button
+								type="submit"
+								onClick={selectedChat?.agentId ? handleSend : handleShow}
+							>
+								{selectedChat?.agentId ? "Send" : "Take this query"}
+							</Button>
+						</div>
+					) : null}
+				</div>
 			</div>
-		</div>
 		</>
 	)
 }

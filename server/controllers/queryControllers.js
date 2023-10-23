@@ -1,5 +1,4 @@
 const Query = require("../models/queryModel")
-// let nextQueryId = 1
 
 // @desc Fetch all queries
 // @route GET /api/querys
