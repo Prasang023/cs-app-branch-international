@@ -1,0 +1,5 @@
+{
+	"0": ["loan", "payment", "transaction"],
+	"1": ["branch", "international", "account"],
+	"2": ["what", "how"]
+}

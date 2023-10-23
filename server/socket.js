@@ -17,6 +17,10 @@ const getAgents = () => {
 	})
 }
 
+const getUser = (userId) => {
+	return users.find((user) => user.userId === userId)
+}
+
 module.exports = function (io) {
 	io.on("connection", function (socket) {
 		console.log("socket connected", socket.id)
@@ -26,10 +30,15 @@ module.exports = function (io) {
 			io.emit("server", "msg from server")
 		})
 
+		socket.on("allotment", () => {
+			io.emit("updateAfterAllotment")
+		})
+
 		socket.on("addUser", (userId) => {
 			console.log(userId, socket.id)
 			addUser(userId, socket.id)
 			io.emit("getUsers", users)
+			console.log(users)
 		})
 
 		socket.on("disconnect", () => {
@@ -45,6 +54,18 @@ module.exports = function (io) {
 				console.log(user, obj)
 				io.to(user.socketId).emit("getNewQuery", obj)
 			})
+		})
+
+		socket.on("sendMsg", ({ senderId, receiverId, msg }) => {
+			const user = getUser(receiverId)
+			console.log(user)
+			if (user) {
+				console.log(senderId, user)
+				io.to(user.socketId).emit("getMsg", {
+					senderId,
+					msg
+				})
+			}
 		})
 	})
 }

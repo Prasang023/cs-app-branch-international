@@ -11,6 +11,7 @@ QuerySchema = new mongoose.Schema(
 	{
 		customerId: { type: String, required: true },
 		agentId: { type: String, default: "empty" },
+		category: { type: String, default: "empty" },
 		priority: { type: Number, default: 3 },
 		isAlloted: { type: Boolean, default: false },
 		isResolved: { type: Boolean, default: false },

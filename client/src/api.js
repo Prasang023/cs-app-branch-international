@@ -20,6 +20,15 @@ export const createNewAgent = async (newAgent) => {
     }
 }
 
+export const getAgentById = async (id) => {
+    try {
+        const { data } = await axios.get( BASE_URL + `/api/agents/${id}`)
+        return data
+    } catch (error) {
+        alert("Something went wrong")
+    }
+}
+
 export const getAllCustomers = async () => {
 	try {
 		const { data } = await axios.get( BASE_URL + "/api/customers/")
@@ -32,6 +41,15 @@ export const getAllCustomers = async () => {
 export const createNewCustomer = async (newCustomer) => {
     try {
         const { data } = await axios.post( BASE_URL + "/api/customers", newCustomer )
+        return data
+    } catch (error) {
+        alert("Something went wrong")
+    }
+}
+
+export const getCustomerById = async (id) => {
+    try {
+        const { data } = await axios.get( BASE_URL + `/api/customers/${id}`)
         return data
     } catch (error) {
         alert("Something went wrong")
@@ -77,6 +95,24 @@ export const getAllotedQuerys = async (id) => {
 export const getQuerysByCustomerId = async (id) => {
     try {
         const { data } = await axios.get( BASE_URL + `/api/querys/customer/${id}`)
+        return data
+    } catch (error) {
+        alert("Something went wrong")
+    }
+}
+
+export const allotQuery = async (id, agentId) => {
+    try {
+        const { data } = await axios.patch( BASE_URL + `/api/querys/agent/${id}`, { agentId })
+        return data
+    } catch (error) {
+        alert("Something went wrong")
+    }
+}
+
+export const updateConversation = async (id, conversation) => {
+    try {
+        const { data } = await axios.patch( BASE_URL + `/api/querys/conversation/${id}`, { conversation })
         return data
     } catch (error) {
         alert("Something went wrong")

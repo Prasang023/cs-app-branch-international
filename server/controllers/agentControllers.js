@@ -36,7 +36,7 @@ const addAgent = async (req, res) => {
 // @route GET /api/agents/:id
 const getAgentById = async (req, res) => {
 	try {
-		const agent = await Agent.findById(req.params.id)
+		const agent = await Agent.find({ agentId: req.params.id })
 		res.status(200).json(agent)
 		console.log("get: Agent/:id call success")
 	} catch (err) {

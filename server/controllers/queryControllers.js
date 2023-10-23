@@ -22,9 +22,9 @@ const addQuery = async (req, res) => {
 	try {
 		const savedQuery = await newQuery.save()
 		res.status(200).json(savedQuery)
-		console.log("post: Query call success")
+		console.log("post: Add Query success")
 	} catch (err) {
-        console.log(err)    
+		console.log(err)
 		res.status(500).json(err)
 	}
 }
@@ -37,7 +37,7 @@ const getQueryById = async (req, res) => {
 		res.status(200).json(query)
 		console.log("get: Query/:id call success")
 	} catch (err) {
-        console.log(err)
+		console.log(err)
 		res.status(500).json(err)
 	}
 }
@@ -78,4 +78,55 @@ const getQuerysByCustomerId = async (req, res) => {
 	}
 }
 
-module.exports = { getQuerys, addQuery, getQueryById, getUnallotedQuerys, getAllotedQuerysByAgentId, getQuerysByCustomerId }
+const allotToAgent = async (req, res) => {
+	const queryId = req.params.id
+	const agentId = req.body.agentId
+	try {
+		const data = await Query.updateOne(
+			{ _id: queryId },
+			{
+				$set: { agentId: agentId, isAlloted: true },
+				$currentDate: { lastModified: true }
+			}
+		)
+		res.status(200).json(data)
+		console.log("get: Query/customer/:id call success")
+	} catch (err) {
+		console.log(err)
+		res.status(500).json(err)
+	}
+}
+
+const updateConversation = async (req, res) => {
+	const queryId = req.params.id
+	const convo = req.body.conversation
+
+	try {
+		const data = await Query.updateOne(
+			{
+				_id: queryId
+			},
+			{
+				$push: {
+					conversation: { $each: convo }
+				}
+			}
+		)
+		res.status(200).json(data)
+		console.log("get: Query/customer/:id call success")
+	} catch (err) {
+		console.log(err)
+		res.status(500).json(err)
+	}
+}
+
+module.exports = {
+	getQuerys,
+	addQuery,
+	getQueryById,
+	getUnallotedQuerys,
+	getAllotedQuerysByAgentId,
+	getQuerysByCustomerId,
+	allotToAgent,
+	updateConversation
+}

@@ -33,7 +33,7 @@ const addCustomer = async (req, res) => {
 // @route GET /api/customers/:id
 const getCustomerById = async (req, res) => {
 	try {
-		const customer = await Customer.findById(req.params.id)
+		const customer = await Customer.find({ customerId: req.params.id })
 		res.status(200).json(customer)
 		console.log("get: Customer/:id call success")
 	} catch (err) {
