@@ -9,7 +9,9 @@ import {
 	allotQuery,
 	updateConversation,
 	getAgentById,
-	getAllCustomers
+	getAllCustomers,
+	resolveQuery,
+	fetchCannedMsgs
 } from "../api"
 import Modal from "react-bootstrap/Modal"
 
@@ -26,6 +28,7 @@ const AgentDashboard = () => {
 	const [userDetails, setUserDetails] = useState(null)
 	const [show, setShow] = useState(false)
 	const [allCustomers, setAllCustomers] = useState(null)
+	const [cannedMsgs, setCannedMsgs] = useState([])
 
 	const handleClose = () => setShow(false)
 	const handleShow = () => setShow(true)
@@ -35,11 +38,18 @@ const AgentDashboard = () => {
 		s.on("connect", () => console.log(s.id))
 		s.emit("addUser", id)
 		setSocket(s)
-
+		getQueries()
+		getUserDetails()
+		getDetailsOfAllCustomers()
 		return () => {
 			s.disconnect()
 		}
 	}, [])
+
+	// useEffect(() => {
+
+	// 	// getAllCustomers()
+	// }, [userDetails])
 
 	socket?.on("getNewQuery", (obj) => {
 		console.log("new query got", obj)
@@ -56,6 +66,21 @@ const AgentDashboard = () => {
 		setConversation([...conversation, { text: msg, sentBy: "customer" }])
 	})
 
+	const getDetailsOfAllCustomers = async () => {
+		const data = await getAllCustomers()
+		const obj = {}
+		const idarr = data.map((customer) => customer.customerId)
+		for (let i = 0; i < idarr.length; i++) {
+			obj[idarr[i]] = data[i]
+		}
+		setAllCustomers(obj)
+	}
+
+	const getUserDetails = async () => {
+		const data = await getAgentById(id)
+		setUserDetails(data[0])
+	}
+
 	const getQueries = async () => {
 		const unallotedQueryData = await getUnallotedQuerys()
 		const allotedQueryData = await getAllotedQuerys(id)
@@ -68,22 +93,11 @@ const AgentDashboard = () => {
 		// console.log(unallotedQueryData, allotedQueryData)
 	}
 
-	useEffect(() => {
-		getQueries()
-		const getUserDetails = async () => {
-			const data = await getAgentById(id)
-			setUserDetails(data[0])
-		}
-		getUserDetails()
-		// getAllCustomers()
-	}, [userDetails])
-
 	// console.log(allCustomers)
 
 	const handleSend = () => {
 		if (!msg || msg === "") return
 		setConversation([...conversation, { text: msg, sentBy: "agent" }])
-		console.log("Printeing id", socket.id)
 		socket.emit("sendMsg", {
 			senderId: id,
 			receiverId: selectedChat.customerId,
@@ -107,9 +121,32 @@ const AgentDashboard = () => {
 		setSelectedChat(query)
 		setConversation([])
 		getQueries()
+		getCannedMsgs()
 	}
 
-	// console.log("userDetails", userDetails)
+	const handleResolve = async () => {
+		await resolveQuery(selectedChat._id)
+		getQueries()
+		handleSelectedChat(null)
+		socket.emit("allotment")
+	}
+
+	const handleCannedMsgs = (msg) => {
+		setConversation([...conversation, { text: msg, sentBy: "agent" }])
+		socket.emit("sendMsg", {
+			senderId: id,
+			receiverId: selectedChat.customerId,
+			msg: msg
+		})
+	}
+
+	const getCannedMsgs = async () => {
+		const data = await fetchCannedMsgs(selectedChat?.category)
+		console.log("canned", data)
+		setCannedMsgs(data[0].msgs)
+	}
+
+	console.log("userDetails", allCustomers)
 
 	return (
 		<>
@@ -142,8 +179,9 @@ const AgentDashboard = () => {
 							>
 								<div className="query-thumbnail-topline">
 									<p className="query-customer-details">
-										<b>Customer id: </b>
-										{query.customerId}
+										<b>Customer details: </b>
+										{query.customerId} {allCustomers[query.customerId].name}{" "}
+										{allCustomers[query.customerId].email}
 									</p>
 									<Badge
 										bg={
@@ -181,8 +219,9 @@ const AgentDashboard = () => {
 							>
 								<div className="query-thumbnail-topline">
 									<p className="query-customer-details">
-										<b>Customer id: </b>
-										{query.customerId}
+										<b>Customer details: </b>
+										{query.customerId} {allCustomers[query.customerId].name}{" "}
+										{allCustomers[query.customerId].email}
 									</p>
 									<div>
 										<Badge
@@ -262,11 +301,26 @@ const AgentDashboard = () => {
 					)}
 					{selectedChat ? (
 						<div className="send-msg-area">
+							{selectedChat?.agentId && !selectedChat.isResolved ? (
+								<div className="cannedMsgsContainer">
+									{cannedMsgs.map((msgText) => (
+										<div
+											key={msgText}
+											onClick={() => handleCannedMsgs(msgText)}
+											className="cannedMsg"
+										>
+											{msgText}
+										</div>
+									))}
+								</div>
+							) : null}
 							<Form>
 								<Form.Group className="mb-3" controlId="formBasicEmail">
 									<Form.Control
 										value={msg}
-										disabled={!selectedChat?.agentId}
+										disabled={
+											!selectedChat?.agentId || selectedChat?.isResolved
+										}
 										onChange={(e) => setMsg(e.target.value)}
 										type="text"
 										placeholder="Type Message Here"
@@ -274,10 +328,19 @@ const AgentDashboard = () => {
 								</Form.Group>
 							</Form>
 							<Button
+								disabled={selectedChat?.isResolved}
+								className="mb-3"
 								type="submit"
 								onClick={selectedChat?.agentId ? handleSend : handleShow}
 							>
 								{selectedChat?.agentId ? "Send" : "Take this query"}
+							</Button>
+							<Button
+								type="submit"
+								onClick={handleResolve}
+								disabled={!selectedChat?.agentId || selectedChat?.isResolved}
+							>
+								Mark as Resolved
 							</Button>
 						</div>
 					) : null}

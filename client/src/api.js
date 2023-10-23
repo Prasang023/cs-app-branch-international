@@ -118,3 +118,21 @@ export const updateConversation = async (id, conversation) => {
         alert("Something went wrong")
     }
 }
+
+export const resolveQuery = async (id) => {
+    try {
+        const { data } = await axios.patch( BASE_URL + `/api/querys/resolve/${id}`)
+        return data
+    } catch (error) {
+        alert("Something went wrong")
+    }
+}
+
+export const fetchCannedMsgs = async (category) => {
+    try {
+        const { data } = await axios.get( BASE_URL + `/api/querys/cannedMsgs/${category}`)
+        return data
+    } catch (error) {
+        alert("Something went wrong.")
+    }
+}

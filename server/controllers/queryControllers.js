@@ -1,4 +1,5 @@
 const Query = require("../models/queryModel")
+const CannedMsg = require("../models/cannedMsgModel")
 
 // @desc Fetch all queries
 // @route GET /api/querys
@@ -119,6 +120,40 @@ const updateConversation = async (req, res) => {
 	}
 }
 
+const resolveQuery = async (req, res) => {
+	const queryId = req.params.id
+
+	try {
+		const data = await Query.updateOne(
+			{
+				_id: queryId
+			},
+			{
+				$set: { isResolved: true },
+				$currentDate: { lastModified: true }
+			}
+		)
+		res.status(200).json(data)
+		console.log("get: Query/resolve/:id call success")
+	} catch (err) {
+		console.log(err)
+		res.status(500).json(err)
+	}
+}
+
+// @desc get canned mssgs
+// @route GET /api/querys//cannedMsgs/:category
+const getCannedMsgs = async (req, res) => {
+	const category = req.params.category
+	try {
+		const msgs = await CannedMsg.find({ category: category })
+		res.status(200).json(msgs)
+		console.log("get: Canned msgs call success")
+	} catch (err) {
+		res.status(500).json(err)
+	}
+}
+
 module.exports = {
 	getQuerys,
 	addQuery,
@@ -127,5 +162,7 @@ module.exports = {
 	getAllotedQuerysByAgentId,
 	getQuerysByCustomerId,
 	allotToAgent,
-	updateConversation
+	updateConversation,
+	resolveQuery,
+	getCannedMsgs
 }

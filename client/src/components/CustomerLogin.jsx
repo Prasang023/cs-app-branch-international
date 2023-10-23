@@ -94,9 +94,11 @@ const CustomerLogin = ({ toggleShowA }) => {
 								}
 								type="text"
 								placeholder="name"
-                className="mb-3"
+								className="mb-3"
 							/>
-							<Button onClick={handleSubmit} className="mt-3">Submit</Button>
+							<Button onClick={handleSubmit} className="mt-3">
+								Submit
+							</Button>
 						</Form.Group>
 						<p>
 							Existing User ? <b onClick={() => setScreen(0)}>Click Here</b>

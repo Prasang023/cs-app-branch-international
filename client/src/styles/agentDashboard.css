@@ -127,3 +127,21 @@
     bottom: 10px;
     left: 20px;
 }
+
+.cannedMsgsContainer{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 5px;;
+}
+
+.cannedMsg{
+    margin: 5px 10px;
+    border: 2.5px solid #2d92cc;
+    border-radius: 10px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.cannedMsg:hover{
+    background-color: #aee1ff;
+}

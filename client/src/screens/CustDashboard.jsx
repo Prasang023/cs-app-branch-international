@@ -107,6 +107,8 @@ const CustDashboard = () => {
 		setConversation([...conversation, { text: msg, sentBy: "agent" }])
 	})
 
+	const handleResolve = () => {}
+
 	return (
 		<div>
 			<Modal show={show} onHide={handleClose}>
@@ -123,7 +125,7 @@ const CustDashboard = () => {
 							<option value="loan">Loans</option>
 							<option value="transaction">Transaction</option>
 							<option value="account">Account</option>
-							<option value="info">information</option>
+							<option value="general">General</option>
 						</Form.Select>
 						<Form.Group
 							className="mb-3"
@@ -223,15 +225,28 @@ const CustDashboard = () => {
 								<Form.Group className="mb-3" controlId="formBasicEmail">
 									<Form.Control
 										value={msg}
-										disabled={!selectedChat?.agentId}
+										disabled={
+											!selectedChat?.agentId || selectedChat?.isResolved
+										}
 										onChange={(e) => setMsg(e.target.value)}
 										type="text"
 										placeholder="Type Message Here"
 									/>
 								</Form.Group>
 							</Form>
-							<Button type="submit" onClick={handleSend}>
+							<Button
+								type="submit"
+								onClick={handleSend}
+								disabled={!selectedChat?.agentId || selectedChat?.isResolved}
+							>
 								Send
+							</Button>
+							<Button
+								type="submit"
+								onClick={handleResolve}
+								disabled={!selectedChat?.agentId || selectedChat?.isResolved}
+							>
+								Mark as Resolved
 							</Button>
 						</div>
 					) : null}
