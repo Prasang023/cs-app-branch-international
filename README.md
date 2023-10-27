@@ -50,6 +50,6 @@ Agent Interface: Agent can create assign a particular query to itself and then u
 - Canned Messages: Implemented canned messages for each query based on the different categories that can ease the process of query resolution for the agents.
 - Websocket: Used Socket.io for real-time commuication between agents and customers as well as saving a backup of the query on the database.
 
-###Techstack Used
+### Techstack Used
 Frontend: ReactJs, Javascript, HTML, CSS
 Backend: Socket.io, nodeJs, MongoDB
